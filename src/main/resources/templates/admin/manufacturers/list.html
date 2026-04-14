@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html th:replace="~{layout :: layout(~{::title}, ~{::main})}"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+      xmlns:th="http://www.thymeleaf.org">
+<head><title th:text="#{nav.manufacturers}">Manufacturers</title></head>
+<body>
+<main>
+    <div class="d-flex justify-content-between mb-3">
+        <h2 th:text="#{nav.manufacturers}">Manufacturers</h2>
+        <a class="btn btn-success" th:href="@{/admin/manufacturers/new}">
+            <i class="bi bi-plus-circle me-1"></i><span th:text="#{action.create}">Create</span>
+        </a>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead class="table-dark">
+            <tr>
+                <th th:text="#{table.id}">ID</th>
+                <th th:text="#{table.name}">Name</th>
+                <th th:text="#{table.actions}">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${#lists.isEmpty(manufacturers)}">
+                <td class="text-center text-muted py-3" colspan="3">None.</td>
+            </tr>
+            <tr th:each="m : ${manufacturers}">
+                <td th:text="${m.id}">1</td>
+                <td th:text="${m.name}">Name</td>
+                <td>
+                    <div class="d-flex gap-1">
+                        <a class="btn btn-sm btn-outline-secondary"
+                           th:href="@{/admin/manufacturers/{id}/edit(id=${m.id})}" th:text="#{action.edit}">Edit</a>
+                        <form method="post"
+                              sec:authorize="hasRole('ADMIN')" th:action="@{/admin/manufacturers/{id}/delete(id=${m.id})}"
+                              th:onsubmit="'return confirm(\'' + #{action.confirm.delete} + '\')'">
+                            <button class="btn btn-sm btn-outline-danger" th:text="#{action.delete}"
+                                    type="submit">Delete
+                            </button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+</html>

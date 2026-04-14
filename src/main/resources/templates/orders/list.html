@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html th:replace="~{layout :: layout(~{::title}, ~{::main})}" xmlns:th="http://www.thymeleaf.org">
+<head><title th:text="#{admin.manage.orders}">Manage Orders</title></head>
+<h2 class="mb-3" th:text="#{admin.manage.orders}">Manage Orders</h2>
+<body>
+<main>
+    <div class="d-flex justify-content-between mb-3">
+        <h2 th:text="#{orders.title}">My Orders</h2>
+        <a class="btn btn-success" th:href="@{/orders/place}" th:text="#{action.place.order}">Place Order</a>
+    </div>
+    <div class="text-center py-5 text-muted" th:if="${#lists.isEmpty(orders)}">
+        <i class="bi bi-bag-x display-4"></i>
+        <p class="mt-2" th:text="#{orders.no.orders}">No orders yet.</p>
+        <a class="btn btn-primary" th:href="@{/appliances}" th:text="#{orders.browse}">Browse appliances</a>
+    </div>
+    <div class="table-responsive" th:unless="${#lists.isEmpty(orders)}">
+        <table class="table table-hover">
+            <thead class="table-dark">
+            <tr>
+                <th th:text="#{table.id}">#</th>
+                <th th:text="#{table.quantity}">Items</th>
+                <th th:text="#{table.total}">Total</th>
+                <th th:text="#{table.status}">Status</th>
+                <th th:text="#{table.actions}">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="o : ${orders}">
+                <td th:text="${o.id}">1</td>
+                <td th:text="${#lists.size(o.orderRowSet)} + ' ' + #{orders.items}">1 item(s)</td>
+                <td th:text="${@priceHelper.format(o.total, #locale)}">$0.00</td>
+                <td>
+                    <span th:class="${'badge ' + (o.pending ? 'badge-pending' : (o.approved ? 'badge-approved' : 'badge-rejected'))}"
+                          th:text="#{${o.pending ? 'order.status.pending' : (o.approved ? 'order.status.approved' : 'order.status.rejected')}}">Status</span>
+                </td>
+                <td>
+                    <a class="btn btn-sm btn-outline-primary" th:href="@{/orders/{id}(id=${o.id})}"
+                       th:text="#{action.view}">View</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+</html>

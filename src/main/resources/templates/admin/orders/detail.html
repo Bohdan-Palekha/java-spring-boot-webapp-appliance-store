@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html th:replace="~{layout :: layout(~{::title}, ~{::main})}"
+      xmlns:th="http://www.thymeleaf.org">
+<head><title th:text="#{admin.manage.orders}">Order Detail</title></head>
+<body>
+<main>
+    <div class="d-flex justify-content-between mb-3">
+        <h2>#<span th:text="${order.id}">1</span></h2>
+        <div class="d-flex align-items-center gap-2">
+        <span th:class="${'badge fs-6 ' + (order.pending ? 'badge-pending' : (order.approved ? 'badge-approved' : 'badge-rejected'))}"
+              th:text="#{${order.pending ? 'order.status.pending' : (order.approved ? 'order.status.approved' : 'order.status.rejected')}}">Status</span>
+            <div class="d-flex gap-1" th:if="${order.pending}">
+                <form method="post" th:action="@{/admin/orders/{id}/approve(id=${order.id})}">
+                    <button class="btn btn-success btn-sm" th:text="#{action.approve}" type="submit">Approve</button>
+                </form>
+                <form method="post" th:action="@{/admin/orders/{id}/reject(id=${order.id})}">
+                    <button class="btn btn-danger btn-sm" th:text="#{action.reject}" type="submit">Reject</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <p>
+                <strong th:text="#{table.client}">Client</strong>:
+                <span th:text="${order.client.name}">Name</span>
+                (<span th:text="${order.client.email}">email</span>)
+            </p>
+            <p>
+                <strong th:text="#{table.employee}">Employee</strong>:
+                <span th:text="${order.employee?.name} ?: #{order.employee.unassigned}">Not assigned</span>
+            </p>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+            <tr>
+                <th th:text="#{table.name}">Appliance</th>
+                <th th:text="#{table.price}">Unit Price</th>
+                <th th:text="#{table.quantity}">Qty</th>
+                <th th:text="#{table.total}">Line Total</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="row : ${order.orderRowSet}">
+                <td th:text="${row.appliance.name}">Name</td>
+                <td th:text="${@priceHelper.format(row.appliance.price, #locale)}">$0.00</td>
+                <td th:text="${row.number}">1</td>
+                <td th:text="${@priceHelper.format(row.amount, #locale)}">$0.00</td>
+            </tr>
+            </tbody>
+            <tfoot>
+            <tr class="table-active fw-bold">
+                <td class="text-end" colspan="3" th:text="#{table.total}">Total</td>
+                <td th:text="${@priceHelper.format(order.total, #locale)}">$0.00</td>
+            </tr>
+            </tfoot>
+        </table>
+    </div>
+    <a class="btn btn-outline-secondary" th:href="@{/admin/orders}" th:text="#{action.back}">Back</a>
+</main>
+</html>

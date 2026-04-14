@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html th:replace="~{layout :: layout(~{::title}, ~{::main})}"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <head><title th:text="${isClient} ? #{admin.dashboard.client.title} : #{admin.dashboard.title}">Dashboard</title>
+    </head>
+<body>
+<main>
+    <h2 class="mb-4" th:text="${isClient} ? #{admin.dashboard.client.title} : #{admin.dashboard.title}">Dashboard</h2>
+
+
+    <div th:if="${isAdmin or isEmployee}">
+        <div class="row g-3 mb-4">
+            <div class="col-md-4">
+                <div class="card text-bg-warning">
+                    <div class="card-body text-center py-3">
+                        <h2 class="mb-0" th:text="${pendingOrders}">0</h2>
+                        <small th:text="#{admin.stats.pending}">Pending</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-bg-success">
+                    <div class="card-body text-center py-3">
+                        <h2 class="mb-0" th:text="${approvedOrders}">0</h2>
+                        <small th:text="#{admin.stats.approved}">Approved</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-bg-danger">
+                    <div class="card-body text-center py-3">
+                        <h2 class="mb-0" th:text="${rejectedOrders}">0</h2>
+                        <small th:text="#{admin.stats.rejected}">Rejected</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row g-3 mb-4" sec:authorize="hasRole('ADMIN')">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h3 th:text="${totalAppliances}">0</h3>
+                        <small class="text-muted" th:text="#{admin.stats.appliances}">Appliances</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h3 th:text="${totalClients}">0</h3>
+                        <small class="text-muted" th:text="#{admin.stats.clients}">Clients</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h3 th:text="${totalEmployees}">0</h3>
+                        <small class="text-muted" th:text="#{admin.stats.employees}">Employees</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex gap-2">
+            <a class="btn btn-primary" th:href="@{/admin/orders}" th:text="#{admin.manage.orders}">Manage Orders</a>
+            <a class="btn btn-outline-secondary" th:href="@{/admin/appliances}" th:text="#{admin.manage.appliances}">Manage
+                Appliances</a>
+        </div>
+    </div>
+
+    <div th:if="${isClient}">
+        <div th:if="${isClient}">
+            <h4>Your Recent Orders</h4>
+            <div class="text-muted" th:if="${#lists.isEmpty(myOrders)}">
+                <p>No orders yet. <a th:href="@{/appliances}">Browse appliances</a></p>
+            </div>
+            <div class="table-responsive" th:unless="${#lists.isEmpty(myOrders)}">
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th th:text="#{table.id}">#</th>
+                        <th>Items</th>
+                        <th th:text="#{table.status}">Status</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="o : ${myOrders}">
+                        <td th:text="${o.id}">1</td>
+                        <td th:text="${#lists.size(o.orderRowSet)} + ' item(s)'">1</td>
+                        <td>
+                            <span th:class="${'badge ' + (o.pending ? 'badge-pending' : (o.approved ? 'badge-approved' : 'badge-rejected'))}"
+                                  th:text="#{${o.pending ? 'order.status.pending' : (o.approved ? 'order.status.approved' : 'order.status.rejected')}}">Status</span>
+                        </td>
+                        <td><a class="btn btn-sm btn-outline-primary" th:href="@{/orders/{id}(id=${o.id})}"
+                               th:text="#{action.view}">View</a></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+</main>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html th:replace="~{layout :: layout(~{::title}, ~{::main})}" xmlns:th="http://www.thymeleaf.org">
+<head><title>Place Order</title></head>
+<body>
+<main>
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h2 class="mb-4" th:text="#{action.place.order}">Place Order</h2>
+            <div class="card mb-4" th:if="${selectedAppliance}">
+                <div class="card-body">
+                    <h6 class="card-title" th:text="${selectedAppliance.name}">Appliance</h6>
+                    <p class="text-muted small" th:text="${selectedAppliance.manufacturer.name}">Brand</p>
+                    <p class="fw-bold text-success">
+                        <span th:text="${#numbers.formatDecimal(selectedAppliance.price,1,2)}">0</span> PLN / unit
+                    </p>
+                </div>
+            </div>
+            <form method="post" novalidate th:action="@{/orders/place}" th:object="${orderForm}">
+                <div th:if="${selectedAppliance}">
+                    <input th:field="*{applianceId}" type="hidden">
+                </div>
+                <div class="mb-3" th:unless="${selectedAppliance}">
+                    <label class="form-label">Appliance ID</label>
+                    <input class="form-control" min="1"
+                           required
+                           th:classappend="${#fields.hasErrors('applianceId')}?' is-invalid':''" th:field="*{applianceId}" type="number">
+                    <div class="invalid-feedback" th:errors="*{applianceId}">Error</div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Quantity</label>
+                    <input class="form-control" max="100"
+                           min="1"
+                           required th:classappend="${#fields.hasErrors('quantity')}?' is-invalid':''" th:field="*{quantity}" type="number">
+                    <div class="invalid-feedback" th:errors="*{quantity}">Error</div>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-success" th:text="#{action.place.order}" type="submit">Order</button>
+                    <a class="btn btn-outline-secondary" th:href="@{/appliances}" th:text="#{action.cancel}">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+</html>

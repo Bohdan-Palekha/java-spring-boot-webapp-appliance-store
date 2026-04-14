@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html th:replace="~{layout :: layout(~{::title}, ~{::main})}"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+      xmlns:th="http://www.thymeleaf.org">
+<head><title th:text="#{nav.brand}">Appliance Store</title></head>
+<body>
+<main>
+    <div class="p-5 mb-4 bg-dark text-white rounded-3">
+        <div class="container-fluid py-2">
+            <h1 class="display-5 fw-bold" th:text="#{home.hero.title}">Quality Appliances</h1>
+            <p class="col-md-8 fs-5" th:text="#{home.hero.subtitle}">Browse our wide selection.</p>
+            <div class="d-flex flex-wrap gap-2">
+                <a class="btn btn-warning btn-lg" th:href="@{/appliances}"
+                   th:text="#{home.hero.cta}">Browse</a>
+                <a class="btn btn-outline-light btn-lg"
+                   sec:authorize="hasAnyRole('ADMIN','EMPLOYEE')"
+                   th:href="@{/dashboard}"
+                   th:text="#{nav.dashboard}">Dashboard</a>
+                <a class="btn btn-outline-light btn-lg"
+                   sec:authorize="!isAuthenticated()"
+                   th:href="@{/register}"
+                   th:text="#{nav.register}">Register</a>
+            </div>
+        </div>
+    </div>
+
+    <h2 class="mb-4" th:text="#{home.featured.title}">Featured</h2>
+    <div class="text-muted text-center py-4" th:if="${#lists.isEmpty(featured)}">
+        <i class="bi bi-box-seam display-4"></i>
+        <p class="mt-2" th:text="#{home.featured.empty}">No appliances yet.</p>
+    </div>
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-4">
+        <div class="col" th:each="a : ${featured}">
+            <div class="card h-100">
+                <div class="card-body">
+                    <span class="badge bg-primary mb-2" th:text="#{|category.${a.category}|}">Cat</span>
+                    <h6 class="card-title" th:text="${a.name}">Name</h6>
+                    <p class="text-muted small mb-1" th:text="${a.manufacturer.name}">Brand</p>
+                    <p class="fw-bold text-success mb-0"
+                       th:text="${@priceHelper.format(a.price, #locale)}">$0.00</p>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <a class="btn btn-outline-primary btn-sm w-100"
+                       th:href="@{/appliances/{id}(id=${a.id})}"
+                       th:text="#{action.view}">View</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+</html>

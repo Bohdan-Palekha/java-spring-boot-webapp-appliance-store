@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html th:replace="~{layout :: layout(~{::title}, ~{::main})}"
+      xmlns:th="http://www.thymeleaf.org">
+<head><title th:text="${isEdit} ? #{form.manufacturer.edit} : #{form.manufacturer.create}">Manufacturer Form</title>
+</head>
+<body>
+<main>
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <h2 class="mb-4" th:text="${isEdit} ? #{form.manufacturer.edit} : #{form.manufacturer.create}">Form</h2>
+            <form method="post" novalidate th:action="${formAction}" th:object="${form}">
+                <div class="mb-3">
+                    <label class="form-label">
+                        <span th:text="#{table.name}">Name</span> <span class="text-danger">*</span>
+                    </label>
+                    <input class="form-control" maxlength="100"
+                           minlength="2"
+                           required th:classappend="${#fields.hasErrors('name')} ? ' is-invalid' : ''" th:field="*{name}" type="text">
+                    <div class="invalid-feedback" th:errors="*{name}">Error</div>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-primary" th:text="#{action.save}" type="submit">Save</button>
+                    <a class="btn btn-outline-secondary" th:href="@{/admin/manufacturers}" th:text="#{action.cancel}">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+</html>

@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html th:replace="~{layout :: layout(~{::title}, ~{::main})}" xmlns:th="http://www.thymeleaf.org">
+<head><title th:text="#{error.403.title}">Access Denied</title></head>
+<body>
+<main>
+    <div class="text-center py-5">
+        <h1 class="display-1 fw-bold text-danger">403</h1>
+        <h2 th:text="#{error.403.title}">Access Denied</h2>
+        <p class="lead text-muted" th:text="${errorMessage} ?: #{error.500.message}">An error occurred.</p>
+        <a class="btn btn-primary me-2" th:href="@{/}" th:text="#{action.go.home}">Go Home</a>
+        <a class="btn btn-outline-secondary" href="javascript:history.back()" th:text="#{action.go.back}">Go Back</a>
+    </div>
+</main>
+</html>

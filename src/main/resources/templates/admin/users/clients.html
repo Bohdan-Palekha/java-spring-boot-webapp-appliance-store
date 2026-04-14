@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html th:replace="~{layout :: layout(~{::title}, ~{::main})}"
+      xmlns:th="http://www.thymeleaf.org">
+<head><title th:text="#{admin.users.clients.title}">Clients</title></head>
+<body>
+<main>
+    <div class="d-flex justify-content-between mb-3">
+        <h2 th:text="#{admin.users.clients.title}">Clients</h2>
+        <a class="btn btn-success" th:href="@{/admin/users/clients/new}" th:text="#{admin.users.client.new}">+ Add
+            Client</a>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead class="table-dark">
+            <tr>
+                <th th:text="#{table.id}">ID</th>
+                <th th:text="#{table.name}">Name</th>
+                <th th:text="#{table.email}">Email</th>
+                <th th:text="#{profile.card.label}">Card</th>
+                <th th:text="#{table.actions}">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${#lists.isEmpty(clients)}">
+                <td class="text-center text-muted py-3" colspan="5" th:text="#{catalogue.empty}">None.</td>
+            </tr>
+            <tr th:each="c : ${clients}">
+                <td th:text="${c.id}">1</td>
+                <td th:text="${c.name}">Name</td>
+                <td th:text="${c.email}">email</td>
+                <td th:text="${c.card} ?: '—'">CARD</td>
+                <td>
+                    <div class="d-flex gap-1">
+                        <a class="btn btn-sm btn-outline-secondary"
+                           th:href="@{/admin/users/clients/{id}/edit(id=${c.id})}" th:text="#{action.edit}">Edit</a>
+                        <form method="post" th:action="@{/admin/users/clients/{id}/delete(id=${c.id})}"
+                              th:onsubmit="'return confirm(\'' + #{action.confirm.delete} + '\')'">
+                            <button class="btn btn-sm btn-outline-danger" th:text="#{action.delete}"
+                                    type="submit">Delete
+                            </button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+</html>

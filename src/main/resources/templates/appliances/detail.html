@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html th:replace="~{layout :: layout(~{::title}, ~{::main})}"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+      xmlns:th="http://www.thymeleaf.org">
+<head><title th:text="${appliance.name}">Detail</title></head>
+<body>
+<main>
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a th:href="@{/}" th:text="#{nav.home}">Home</a></li>
+            <li class="breadcrumb-item"><a th:href="@{/appliances}" th:text="#{nav.appliances}">Appliances</a></li>
+            <li class="breadcrumb-item active" th:text="${appliance.name}">Name</li>
+        </ol>
+    </nav>
+    <div class="row">
+        <div class="col-md-8">
+            <h2 th:text="${appliance.name}">Name</h2>
+            <p class="text-muted" th:text="${appliance.manufacturer.name} + ' — ' + ${appliance.model}">Brand</p>
+            <div class="mb-3">
+                <span class="badge bg-primary me-1" th:text="#{|category.${appliance.category}|}">Cat</span>
+                <span class="badge bg-secondary me-1" th:text="#{|powerType.${appliance.powerType}|}">Power</span>
+                <span class="badge bg-info text-dark" th:text="${appliance.power} + ' W'">W</span>
+            </div>
+            <p class="lead" th:if="${appliance.characteristic}" th:text="${appliance.characteristic}">Spec</p>
+            <p th:if="${appliance.description}" th:text="${appliance.description}">Description</p>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow">
+                <div class="card-body text-center">
+                    <h3 class="text-success" th:text="${@priceHelper.format(appliance.price, #locale)}">$0.00</h3>
+                    <a class="btn btn-success btn-lg w-100 mb-2"
+                       sec:authorize="hasRole('CLIENT')"
+                       th:href="@{/orders/place(applianceId=${appliance.id})}" th:text="#{action.place.order}">Order</a>
+                    <div sec:authorize="!isAuthenticated()">
+                        <a class="btn btn-outline-primary w-100 mb-2" th:href="@{/login}"
+                           th:text="#{auth.login.submit}">Log In to Order</a>
+                    </div>
+                    <a class="btn btn-outline-secondary w-100" th:href="@{/appliances}"
+                       th:text="#{action.back}">Back</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+</html>

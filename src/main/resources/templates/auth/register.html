@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html th:replace="~{layout :: layout(~{::title}, ~{::main})}" xmlns:th="http://www.thymeleaf.org">
+<head><title th:text="#{auth.register.title}">Register</title></head>
+<body>
+<main>
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-5">
+            <div class="card mt-4">
+                <div class="card-body p-4">
+                    <h4 class="card-title text-center mb-4" th:text="#{auth.register.title}">Create Account</h4>
+                    <form method="post" novalidate th:action="@{/register}" th:object="${form}">
+                        <div class="mb-3">
+                            <label class="form-label" th:text="#{auth.register.name.label}">Full Name</label>
+                            <input class="form-control" maxlength="100"
+                                   minlength="2"
+                                   required th:classappend="${#fields.hasErrors('name')}?' is-invalid':''" th:field="*{name}" type="text">
+                            <div class="invalid-feedback" th:errors="*{name}">Error</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" th:text="#{auth.register.email.label}">Email</label>
+                            <input class="form-control" maxlength="100"
+                                   required
+                                   th:classappend="${#fields.hasErrors('email')}?' is-invalid':''" th:field="*{email}" type="email">
+                            <div class="invalid-feedback" th:errors="*{email}">Error</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" th:text="#{auth.register.password.label}">Password</label>
+                            <input class="form-control" maxlength="72"
+                                   minlength="8"
+                                   pattern="^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&amp;+=!]).{8,72}$" required th:classappend="${#fields.hasErrors('password')}?' is-invalid':''" th:field="*{password}"
+                                   type="password">
+                            <div class="invalid-feedback" th:errors="*{password}">Error</div>
+                            <div class="form-text small" th:text="#{auth.password.hint}">Hint</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" th:text="#{auth.register.confirm.label}">Confirm</label>
+                            <input class="form-control" maxlength="72"
+                                   minlength="8"
+                                   required th:classappend="${#fields.hasErrors('confirmPassword')}?' is-invalid':''" th:field="*{confirmPassword}" type="password">
+                            <div class="invalid-feedback" th:errors="*{confirmPassword}">Error</div>
+                        </div>
+                        <button class="btn btn-primary w-100" th:text="#{auth.register.submit}" type="submit">Create
+                            Account
+                        </button>
+                    </form>
+                    <hr>
+                    <p class="text-center mb-0 small">
+                        <span th:text="#{auth.register.have.account}">Already registered?</span>
+                        <a th:href="@{/login}" th:text="#{auth.register.login.link}">Log in</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+</html>

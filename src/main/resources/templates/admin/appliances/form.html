@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html th:replace="~{layout :: layout(~{::title}, ~{::main})}"
+      xmlns:th="http://www.thymeleaf.org">
+<head><title th:text="${isEdit} ? #{form.appliance.edit} : #{form.appliance.create}">Appliance Form</title></head>
+<body>
+<main>
+    <h2 class="mb-4" th:text="${isEdit} ? #{form.appliance.edit} : #{form.appliance.create}">Form</h2>
+    <form method="post" novalidate th:action="${formAction}" th:object="${form}">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label">
+                        <span th:text="#{table.name}">Name</span> <span class="text-danger">*</span>
+                    </label>
+                    <input class="form-control" maxlength="200"
+                           minlength="2"
+                           required th:classappend="${#fields.hasErrors('name')} ? ' is-invalid' : ''" th:field="*{name}" type="text">
+                    <div class="invalid-feedback" th:errors="*{name}">Error</div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">
+                        <span th:text="#{table.category}">Category</span> <span class="text-danger">*</span>
+                    </label>
+                    <select class="form-select"
+                            required
+                            th:classappend="${#fields.hasErrors('category')} ? ' is-invalid' : ''" th:field="*{category}">
+                        <option value="">--</option>
+                        <option th:each="c : ${categories}" th:text="#{|category.${c}|}" th:value="${c}">Cat</option>
+                    </select>
+                    <div class="invalid-feedback" th:errors="*{category}">Error</div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">
+                        <span th:text="#{table.manufacturer}">Manufacturer</span> <span class="text-danger">*</span>
+                    </label>
+                    <select class="form-select"
+                            required
+                            th:classappend="${#fields.hasErrors('manufacturerId')} ? ' is-invalid' : ''" th:field="*{manufacturerId}">
+                        <option value="">--</option>
+                        <option th:each="m : ${manufacturers}" th:text="${m.name}" th:value="${m.id}">Mfr</option>
+                    </select>
+                    <div class="invalid-feedback" th:errors="*{manufacturerId}">Error</div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" th:text="#{form.appliance.model}">Model</label>
+                    <input class="form-control" maxlength="100" th:field="*{model}" type="text">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label">
+                        <span th:text="#{form.appliance.powerType}">Power Type</span> <span class="text-danger">*</span>
+                    </label>
+                    <select class="form-select"
+                            required
+                            th:classappend="${#fields.hasErrors('powerType')} ? ' is-invalid' : ''" th:field="*{powerType}">
+                        <option value="">--</option>
+                        <option th:each="pt : ${powerTypes}" th:text="#{|powerType.${pt}|}" th:value="${pt}">PT</option>
+                    </select>
+                    <div class="invalid-feedback" th:errors="*{powerType}">Error</div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">
+                        <span th:text="#{form.appliance.power}">Power (W)</span> <span class="text-danger">*</span>
+                    </label>
+                    <input class="form-control" max="100000"
+                           min="1"
+                           required th:classappend="${#fields.hasErrors('power')} ? ' is-invalid' : ''" th:field="*{power}" type="number">
+                    <div class="invalid-feedback" th:errors="*{power}">Error</div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">
+                        <span th:text="#{form.appliance.price}">Price</span> <span class="text-danger">*</span>
+                    </label>
+                    <input class="form-control" min="0.01"
+                           required
+                           step="0.01" th:classappend="${#fields.hasErrors('price')} ? ' is-invalid' : ''" th:field="*{price}" type="number">
+                    <div class="invalid-feedback" th:errors="*{price}">Error</div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" th:text="#{form.appliance.characteristic}">Characteristic</label>
+                    <input class="form-control" maxlength="500" th:field="*{characteristic}" type="text">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" th:text="#{form.appliance.description}">Description</label>
+                    <textarea class="form-control" maxlength="2000" rows="3" th:field="*{description}"></textarea>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex gap-2">
+            <button class="btn btn-primary" th:text="#{action.save}" type="submit">Save</button>
+            <a class="btn btn-outline-secondary" th:href="@{/admin/appliances}" th:text="#{action.cancel}">Cancel</a>
+        </div>
+    </form>
+</main>
+</html>

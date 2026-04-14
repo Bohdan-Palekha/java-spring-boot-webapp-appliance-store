@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html th:replace="~{layout :: layout(~{::title}, ~{::main})}"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+      xmlns:th="http://www.thymeleaf.org">
+<head><title th:text="#{admin.manage.appliances}">Manage Appliances</title></head>
+<h2 th:text="#{admin.manage.appliances}">Manage Appliances</h2>
+<body>
+<main>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 th:text="#{catalogue.title}">Catalogue</h2>
+        <span class="text-muted small" th:text="${totalItems} + ' items'">0 items</span>
+    </div>
+
+    <form class="card card-body mb-4" method="get" th:action="@{/appliances}">
+        <div class="row g-2">
+            <div class="col-md-4">
+                <input class="form-control form-control-sm" maxlength="100" name="keyword"
+                       th:placeholder="#{catalogue.search.placeholder}" th:value="${keyword}" type="text">
+            </div>
+            <div class="col-md-2">
+                <select class="form-select form-select-sm" name="category">
+                    <option th:text="#{catalogue.filter.category}" value="">All Categories</option>
+                    <option th:each="c : ${categories}" th:selected="${c == selectedCategory}" th:text="#{|category.${c}|}"
+                            th:value="${c}">Cat
+                    </option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <select class="form-select form-select-sm" name="powerType">
+                    <option th:text="#{catalogue.filter.powerType}" value="">All Types</option>
+                    <option th:each="p : ${powerTypes}" th:selected="${p == selectedPowerType}" th:text="#{|powerType.${p}|}"
+                            th:value="${p}">Pwr
+                    </option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <input class="form-control form-control-sm" min="0" name="minPrice"
+                       step="0.01" th:placeholder="#{catalogue.filter.minPrice}" th:value="${minPrice}" type="number">
+            </div>
+            <div class="col-md-2">
+                <input class="form-control form-control-sm" min="0" name="maxPrice"
+                       step="0.01" th:placeholder="#{catalogue.filter.maxPrice}" th:value="${maxPrice}" type="number">
+            </div>
+        </div>
+        <div class="mt-2 d-flex gap-2">
+            <input name="sortBy" th:value="${sortBy}" type="hidden">
+            <input name="sortDir" th:value="${sortDir}" type="hidden">
+            <button class="btn btn-primary btn-sm" th:text="#{action.search}" type="submit">Search</button>
+            <a class="btn btn-outline-secondary btn-sm" th:href="@{/appliances}" th:if="${hasFilters}"
+               th:text="#{action.clear.filters}">Clear</a>
+        </div>
+    </form>
+
+    <div class="text-center py-5 text-muted" th:if="${#lists.isEmpty(appliances)}">
+        <i class="bi bi-search display-4"></i>
+        <p class="mt-2" th:text="#{catalogue.empty}">No appliances found.</p>
+    </div>
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-4 g-3">
+        <div class="col" th:each="a : ${appliances}">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-1">
+                        <span class="badge bg-primary small" th:text="#{|category.${a.category}|}">Cat</span>
+                        <span class="badge bg-secondary small" th:text="#{|powerType.${a.powerType}|}">Pwr</span>
+                    </div>
+                    <h6 class="card-title mt-1" th:text="${a.name}">Name</h6>
+                    <p class="text-muted small mb-1" th:text="${a.manufacturer.name}">Brand</p>
+                    <p class="small text-secondary mb-1" th:text="${a.power} + ' W'">0 W</p>
+                    <p class="fw-bold text-success mb-0" th:text="${@priceHelper.format(a.price, #locale)}">$0.00</p>
+                </div>
+                <div class="card-footer bg-transparent d-flex gap-1">
+                    <a class="btn btn-outline-primary btn-sm flex-grow-1" th:href="@{/appliances/{id}(id=${a.id})}"
+                       th:text="#{action.view}">View</a>
+                    <a class="btn btn-success btn-sm"
+                       sec:authorize="hasRole('CLIENT')"
+                       th:href="@{/orders/place(applianceId=${a.id})}" th:text="#{action.place.order}">Order</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <nav class="mt-4 d-flex justify-content-center" th:if="${totalPages > 1}">
+        <ul class="pagination">
+            <li class="page-item" th:classappend="${currentPage==0}?' disabled':''">
+                <a class="page-link"
+                   th:href="@{/appliances(page=${currentPage-1},keyword=${keyword},category=${selectedCategory},powerType=${selectedPowerType},minPrice=${minPrice},maxPrice=${maxPrice},sortBy=${sortBy},sortDir=${sortDir})}"
+                   th:text="#{pagination.previous}">Prev</a>
+            </li>
+            <li class="page-item"
+                th:classappend="${i==currentPage}?' active':''" th:each="i : ${#numbers.sequence(0,totalPages-1)}">
+                <a class="page-link"
+                   th:href="@{/appliances(page=${i},keyword=${keyword},category=${selectedCategory},powerType=${selectedPowerType},minPrice=${minPrice},maxPrice=${maxPrice},sortBy=${sortBy},sortDir=${sortDir})}"
+                   th:text="${i+1}">1</a>
+            </li>
+            <li class="page-item" th:classappend="${currentPage>=totalPages-1}?' disabled':''">
+                <a class="page-link"
+                   th:href="@{/appliances(page=${currentPage+1},keyword=${keyword},category=${selectedCategory},powerType=${selectedPowerType},minPrice=${minPrice},maxPrice=${maxPrice},sortBy=${sortBy},sortDir=${sortDir})}"
+                   th:text="#{pagination.next}">Next</a>
+            </li>
+        </ul>
+    </nav>
+</main>
+</html>

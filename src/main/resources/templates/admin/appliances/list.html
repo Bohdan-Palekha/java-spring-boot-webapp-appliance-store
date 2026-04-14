@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html th:replace="~{layout :: layout(~{::title}, ~{::main})}"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+      xmlns:th="http://www.thymeleaf.org">
+<head><title th:text="#{admin.manage.appliances}">Manage Appliances</title></head>
+<body>
+<main>
+    <div class="d-flex justify-content-between mb-3">
+        <h2 th:text="#{admin.manage.appliances}">Manage Appliances</h2>
+        <a class="btn btn-success" th:href="@{/admin/appliances/new}">
+            <i class="bi bi-plus-circle me-1"></i><span th:text="#{action.create}">Create</span>
+        </a>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover table-bordered">
+            <thead class="table-dark">
+            <tr>
+                <th th:text="#{table.id}">ID</th>
+                <th><a class="text-white text-decoration-none"
+                       th:href="@{/admin/appliances(sortBy='name',sortDir=${sortBy=='name'?reverseSortDir:'asc'})}" th:text="#{table.name}">Name</a></th>
+                <th th:text="#{table.category}">Category</th>
+                <th th:text="#{table.manufacturer}">Manufacturer</th>
+                <th><a class="text-white text-decoration-none"
+                       th:href="@{/admin/appliances(sortBy='price',sortDir=${sortBy=='price'?reverseSortDir:'asc'})}" th:text="#{table.price}">Price</a></th>
+                <th th:text="#{table.actions}">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${#lists.isEmpty(appliances)}">
+                <td class="text-center text-muted py-3" colspan="6">No appliances.</td>
+            </tr>
+            <tr th:each="a : ${appliances}">
+                <td th:text="${a.id}">1</td>
+                <td><a th:href="@{/appliances/{id}(id=${a.id})}" th:text="${a.name}">Name</a></td>
+                <td><span class="badge bg-primary" th:text="#{|category.${a.category}|}">Cat</span></td>
+                <td th:text="${a.manufacturer.name}">Brand</td>
+                <td th:text="${@priceHelper.format(a.price, #locale)}">$0.00</td>
+                <td>
+                    <div class="d-flex gap-1">
+                        <a class="btn btn-sm btn-outline-secondary" th:href="@{/admin/appliances/{id}/edit(id=${a.id})}"
+                           th:text="#{action.edit}">Edit</a>
+                        <form method="post"
+                              sec:authorize="hasRole('ADMIN')" th:action="@{/admin/appliances/{id}/delete(id=${a.id})}"
+                              th:onsubmit="'return confirm(\'' + #{action.confirm.delete} + '\')'">
+                            <button class="btn btn-sm btn-outline-danger" th:text="#{action.delete}" type="submit">Del
+                            </button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <nav class="d-flex justify-content-center" th:if="${totalPages > 1}">
+        <ul class="pagination pagination-sm">
+            <li class="page-item" th:classappend="${i==currentPage}?' active':''"
+                th:each="i : ${#numbers.sequence(0,totalPages-1)}">
+                <a class="page-link" th:href="@{/admin/appliances(page=${i},sortBy=${sortBy},sortDir=${sortDir})}"
+                   th:text="${i+1}">1</a>
+            </li>
+        </ul>
+    </nav>
+</main>
+</html>

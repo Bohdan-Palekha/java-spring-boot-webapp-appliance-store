@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html th:replace="~{layout :: layout(~{::title}, ~{::main})}"
+      xmlns:th="http://www.thymeleaf.org">
+<head><title th:text="#{nav.users}">Users</title></head>
+<body>
+<main>
+    <div class="d-flex justify-content-between mb-3">
+        <h2 th:text="#{nav.users}">Users</h2>
+        <div class="d-flex gap-2">
+            <a class="btn btn-outline-secondary btn-sm"
+               th:href="@{/admin/users/clients}" th:text="#{admin.users.clients.title}">Clients</a>
+            <a class="btn btn-outline-secondary btn-sm"
+               th:href="@{/admin/users/employees}" th:text="#{admin.users.employees.title}">Employees</a>
+            <a class="btn btn-success btn-sm"
+               th:href="@{/admin/users/employees/new}" th:text="#{admin.users.employee.add}">+ Employee</a>
+        </div>
+    </div>
+
+    <form class="mb-3 d-flex gap-2" method="get" th:action="@{/admin/users}">
+        <input class="form-control form-control-sm" name="keyword" th:placeholder="#{catalogue.search.placeholder}"
+               th:value="${keyword}" type="text">
+        <button class="btn btn-primary btn-sm" th:text="#{action.search}" type="submit">Search</button>
+        <a class="btn btn-outline-secondary btn-sm" th:href="@{/admin/users}"
+           th:text="#{action.clear.filters}">Clear</a>
+    </form>
+
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead class="table-dark">
+            <tr>
+                <th th:text="#{table.id}">ID</th>
+                <th th:text="#{table.name}">Name</th>
+                <th th:text="#{table.email}">Email</th>
+                <th th:text="#{table.role}">Type</th>
+                <th th:text="#{table.actions}">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="u : ${users}">
+                <td th:text="${u.id}">1</td>
+                <td th:text="${u.name}">Name</td>
+                <td th:text="${u.email}">email</td>
+                <td>
+                    <span class="badge bg-info text-dark"
+                          th:if="${u.class.simpleName == 'Employee'}"
+                          th:text="#{admin.users.employees.title}">Employee</span>
+                    <span class="badge bg-secondary"
+                          th:text="#{admin.users.clients.title}"
+                          th:unless="${u.class.simpleName == 'Employee'}">Client</span>
+                </td>
+                <td>
+                    <div class="d-flex gap-1">
+                        <th:block th:if="${u.class.simpleName == 'Client'}">
+                            <form method="post"
+                                  onsubmit="return confirm(this.dataset.msg)"
+                                  th:action="@{/admin/users/clients/{id}/delete(id=${u.id})}"
+                                  th:attr="data-msg=#{action.confirm.delete}">
+                                <button class="btn btn-sm btn-outline-danger" th:text="#{action.delete}"
+                                        type="submit">Delete
+                                </button>
+                            </form>
+                        </th:block>
+                        <th:block th:if="${u.class.simpleName == 'Employee'}">
+                            <form method="post"
+                                  onsubmit="return confirm(this.dataset.msg)"
+                                  th:action="@{/admin/users/employees/{id}/delete(id=${u.id})}"
+                                  th:attr="data-msg=#{action.confirm.delete}">
+                                <button class="btn btn-sm btn-outline-danger" th:text="#{action.delete}"
+                                        type="submit">Delete
+                                </button>
+                            </form>
+                        </th:block>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+</html>

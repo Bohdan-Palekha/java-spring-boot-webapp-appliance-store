@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html th:replace="~{layout :: layout(~{::title}, ~{::main})}" xmlns:th="http://www.thymeleaf.org">
+<head><title>Order Detail</title></head>
+<body>
+<main>
+    <div class="d-flex justify-content-between mb-3">
+        <h2>#<span th:text="${order.id}">1</span></h2>
+        <span th:class="${'badge fs-6 ' + (order.pending ? 'badge-pending' : (order.approved ? 'badge-approved' : 'badge-rejected'))}"
+              th:text="#{${order.pending ? 'order.status.pending' : (order.approved ? 'order.status.approved' : 'order.status.rejected')}}">Status</span>
+    </div>
+    <div class="table-responsive mb-3">
+        <table class="table">
+            <thead>
+            <tr>
+                <th th:text="#{table.name}">Appliance</th>
+                <th th:text="#{table.price}">Price/unit</th>
+                <th th:text="#{table.quantity}">Qty</th>
+                <th th:text="#{table.total}">Line Total</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="row : ${order.orderRowSet}">
+                <td th:text="${row.appliance.name}">Name</td>
+                <td th:text="${@priceHelper.format(row.appliance.price, #locale)}">$0.00</td>
+                <td th:text="${row.number}">1</td>
+                <td th:text="${@priceHelper.format(row.amount, #locale)}">$0.00</td>
+            </tr>
+            </tbody>
+            <tfoot>
+            <tr class="table-active fw-bold">
+                <td class="text-end" colspan="3" th:text="#{table.total}">Total</td>
+                <td th:text="${@priceHelper.format(order.total, #locale)}">$0.00</td>
+            </tr>
+            </tfoot>
+        </table>
+    </div>
+    <a class="btn btn-outline-secondary" th:href="@{/orders}" th:text="#{action.back}">Back</a>
+</main>
+</html>

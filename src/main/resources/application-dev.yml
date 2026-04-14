@@ -1,0 +1,50 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:appliancedb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=PostgreSQL
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+    defer-datasource-initialization: true
+  sql:
+    init:
+      mode: always
+      encoding: UTF-8
+  thymeleaf:
+    cache: false
+  mail:
+    #host: localhost
+    #port: 1025   # For MailHog
+    #properties:
+    #mail.smtp.auth: false
+    host: ${MAIL_HOST}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USER}
+    password: ${MAIL_PASS}
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+logging:
+  level:
+    com.epam.rd.autocode.assessment.appliances: DEBUG
+    org.springframework.security: DEBUG
+management:
+  health:
+    mail:
+      enabled: false
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id:  ${CLIENT-ID}
+            client-secret:  ${CLIENT-SECRET}
+            scope: openid,profile,email

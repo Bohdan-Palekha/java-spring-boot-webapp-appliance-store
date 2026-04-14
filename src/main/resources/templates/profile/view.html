@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html th:replace="~{layout :: layout(~{::title}, ~{::main})}"
+      xmlns:th="http://www.thymeleaf.org">
+<head><title th:text="#{profile.title}">My Profile</title></head>
+<body>
+<main>
+    <h2 class="mb-4" th:text="#{profile.title}">My Profile</h2>
+
+    <div class="card mb-4" style="max-width:480px">
+        <div class="card-body">
+            <dl class="row mb-0">
+                <dt class="col-sm-4" th:text="#{profile.name.label}">Name</dt>
+                <dd class="col-sm-8" th:text="${client.name}">Name</dd>
+                <dt class="col-sm-4" th:text="#{profile.email.label}">Email</dt>
+                <dd class="col-sm-8" th:text="${client.email}">email</dd>
+                <dt class="col-sm-4" th:text="#{profile.card.label}">Card</dt>
+                <dd class="col-sm-8" th:text="${client.card} ?: #{profile.card.none}">—</dd>
+            </dl>
+        </div>
+    </div>
+
+    <div class="card" style="max-width:480px">
+        <div class="card-header fw-bold" th:text="#{profile.update.card}">Update Loyalty Card</div>
+        <div class="card-body">
+            <form method="post" th:action="@{/profile/card}">
+                <div class="mb-3">
+                    <label class="form-label" for="card" th:text="#{profile.card.label}">Card Number</label>
+                    <input class="form-control" id="card" maxlength="100" name="card"
+                           th:value="${client.card}" type="text">
+                </div>
+                <button class="btn btn-primary" th:text="#{action.save}" type="submit">Save</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="mt-3">
+        <a class="btn btn-outline-secondary" th:href="@{/orders}" th:text="#{nav.orders}">My Orders</a>
+    </div>
+</main>
+</html>
